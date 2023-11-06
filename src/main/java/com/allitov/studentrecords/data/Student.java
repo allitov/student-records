@@ -15,6 +15,6 @@ public class Student {
     private final int age;
 
     public String toString() {
-        return String.format("Студент %s: %s %s; Возвраст: %d", id.toString(), lastName, firstName, age);
+        return String.format("Студент %s: %s %s; Возраст: %d", id.toString(), lastName, firstName, age);
     }
 }

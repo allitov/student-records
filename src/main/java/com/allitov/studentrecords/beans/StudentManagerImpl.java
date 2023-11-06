@@ -16,17 +16,17 @@ public class StudentManagerImpl implements StudentManager {
     }
 
     @Override
-    public boolean saveStudent(Student student) {
-        return students.add(student);
+    public Optional<Student> saveStudent(Student student) {
+        return students.add(student) ? Optional.of(student) : Optional.empty();
     }
 
     @Override
-    public boolean removeStudentById(String id) {
+    public Optional<Student> removeStudentById(String id) {
         UUID uuid;
         try {
             uuid = UUID.fromString(id);
         } catch (IllegalArgumentException e) {
-            return false;
+            return Optional.empty();
         }
 
         Iterator<Student> iterator = students.iterator();
@@ -34,11 +34,11 @@ public class StudentManagerImpl implements StudentManager {
             Student student = iterator.next();
             if (student.getId().equals(uuid)) {
                 iterator.remove();
-                return true;
+                return Optional.of(student);
             }
         }
 
-        return false;
+        return Optional.empty();
     }
 
     @Override

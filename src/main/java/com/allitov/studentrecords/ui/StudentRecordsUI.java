@@ -2,12 +2,17 @@ package com.allitov.studentrecords.ui;
 
 import com.allitov.studentrecords.beans.StudentManager;
 import com.allitov.studentrecords.data.Student;
+import com.allitov.studentrecords.event.DeleteEventHolder;
+import com.allitov.studentrecords.event.Event;
+import com.allitov.studentrecords.event.SaveEventHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
 public class StudentRecordsUI {
 
     private final StudentManager studentManager;
+    private final ApplicationEventPublisher publisher;
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     @ShellMethod(key = "p")
@@ -36,16 +42,28 @@ public class StudentRecordsUI {
                 .firstName(firstName)
                 .age(age)
                 .build();
-        boolean result = studentManager.saveStudent(student);
+        Optional<Student> result = studentManager.saveStudent(student);
 
-        return result ? "Данные сохранены." : "Такая запись уже есть.";
+        if (result.isPresent()) {
+            Event event = new Event(result.get());
+            publisher.publishEvent(new SaveEventHolder(this, event));
+            return "Данные сохранены.";
+        } else {
+            return "Такая запись уже есть";
+        }
     }
 
     @ShellMethod(key = "d")
     public String deleteStudentById(String id) {
-        boolean result = studentManager.removeStudentById(id);
+        Optional<Student> result = studentManager.removeStudentById(id);
 
-        return result ? "Запись удалена." : "Запись не найдена.";
+        if (result.isPresent()) {
+            Event event = new Event(result.get());
+            publisher.publishEvent(new DeleteEventHolder(this, event));
+            return "Запись удалена.";
+        } else {
+            return "Запись не найдена.";
+        }
     }
 
     @ShellMethod(key = "da")

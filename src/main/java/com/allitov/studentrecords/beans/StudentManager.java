@@ -3,14 +3,15 @@ package com.allitov.studentrecords.beans;
 import com.allitov.studentrecords.data.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentManager {
 
     List<Student> getAllStudents();
 
-    boolean saveStudent(Student student);
+    Optional<Student> saveStudent(Student student);
 
-    boolean removeStudentById(String id);
+    Optional<Student> removeStudentById(String id);
 
     boolean removeAllStudents();
 }
