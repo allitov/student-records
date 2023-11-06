@@ -14,4 +14,6 @@ public interface StudentManager {
     Optional<Student> removeStudentById(String id);
 
     boolean removeAllStudents();
+
+    void serializeData();
 }

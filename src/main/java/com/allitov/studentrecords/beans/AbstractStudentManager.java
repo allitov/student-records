@@ -1,14 +1,21 @@
 package com.allitov.studentrecords.beans;
 
 import com.allitov.studentrecords.data.Student;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
-@Component
-public class StudentManagerImpl implements StudentManager {
+@RequiredArgsConstructor
+public abstract class AbstractStudentManager implements StudentManager {
 
-    private final Set<Student> students = new HashSet<>();
+    @Value("${app.saving-file.path}")
+    private String savingFilePath;
+
+    protected final Collection<Student> students;
 
     @Override
     public List<Student> getAllStudents() {
@@ -46,5 +53,20 @@ public class StudentManagerImpl implements StudentManager {
         students.clear();
 
         return true;
+    }
+
+    @Override
+    public void serializeData() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(savingFilePath))) {
+            for (Student student : students) {
+                String studentData = String.format("%s;%s;%s;%d%n",
+                        student.getId(), student.getLastName(),
+                        student.getFirstName(), student.getAge());
+                writer.append(studentData);
+            }
+            writer.flush();
+        } catch (IOException e) {
+            System.out.println("Произошла ошибка во время сохранения данных в файл.");
+        }
     }
 }

@@ -75,6 +75,7 @@ public class StudentRecordsUI {
 
     @ShellMethod(key = "e")
     public void exit() {
+        studentManager.serializeData();
         System.exit(0);
     }
 }

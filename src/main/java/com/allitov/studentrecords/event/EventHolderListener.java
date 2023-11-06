@@ -13,6 +13,6 @@ public class EventHolderListener {
 
     @EventListener
     public void listen(DeleteEventHolder eventHolder) {
-        System.out.println(eventHolder.getEvent().student().getId());
+        System.out.println("ID: " + eventHolder.getEvent().student().getId());
     }
 }
